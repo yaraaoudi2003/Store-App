@@ -9,7 +9,7 @@
 
     <h3 class="text-center mb-4">تسجيل عملية بيع</h3>
 
-    @* عرض رسائل الخطأ إن وجدت *@
+   
     @if (!ViewData.ModelState.IsValid)
     {
         <div class="alert alert-danger">
@@ -90,12 +90,12 @@
     let index = 1;
     let products = @Html.Raw(productsJson);
 
-    // أول صف، نعبّي select بالمنتجات
+   
     let firstSelect = document.querySelector("#productsTable select");
     products.forEach(p => {
         let option = document.createElement("option");
-        option.value = p.Value; // Value يحتوي على Id
-        option.text = p.Text;   // Text يحتوي على اسم المنتج
+        option.value = p.Value;
+        option.text = p.Text;   
         firstSelect.appendChild(option);
     });
 
