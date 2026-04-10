@@ -1,0 +1,77 @@
+﻿@model StoreApp.Models.Product
+
+<div class="container mt-5" dir="rtl">
+
+	<div class="row justify-content-center">
+
+		<div class="col-md-6">
+
+			<div class="card shadow-lg">
+
+				<div class="card-header bg-warning text-dark text-end">
+					<h4 class="mb-0">تعديل المنتج</h4>
+				</div>
+
+				<div class="card-body text-end">
+
+                    <form asp-action="Edit" method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label">اسم المنتج</label>
+                            <input asp-for="Name" class="form-control text-end" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">الكمية</label>
+                            <input asp-for="Quantity" type="number" class="form-control text-end" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">سعر الشراء</label>
+                            <input asp-for="initialPrice" type="number" step="0.01" class="form-control text-end" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">سعر البيع</label>
+                            <input asp-for="UnitPrice" type="number" step="0.01" class="form-control text-end" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">العملة</label>
+
+                            <select asp-for="Currency" class="form-control">
+
+                                <option value="">اختر العملة</option>
+
+                                <option value="USD">دولار $</option>
+
+                                <option value="SYP">ليرة سورية</option>
+
+                            </select>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-warning">
+                            تحديث المنتج
+                        </button>
+
+                    </form>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

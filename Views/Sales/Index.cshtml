@@ -1,0 +1,246 @@
+﻿@model IEnumerable<StoreApp.Models.Sale>
+
+<div class="container mt-4" dir="rtl">
+
+    <h2 class="mb-4 text-center">سجل المبيعات</h2>
+
+    <div class="row mb-4 text-center">
+
+        <div class="col-md-3 mb-2">
+            <div class="card shadow border-success">
+                <div class="card-body">
+                    <h5>💵 ربح اليوم ($)</h5>
+                    <h3>@ViewBag.DailyProfitUSD.ToString("N2") $</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-2">
+            <div class="card shadow border-dark">
+                <div class="card-body">
+                    <h5>💰 ربح اليوم (ل.س)</h5>
+                    <h3>@ViewBag.DailyProfitSYP.ToString("N0") ل.س</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-2">
+            <div class="card shadow border-primary">
+                <div class="card-body">
+                    <h5>🛒 مبيعات اليوم ($)</h5>
+                    <h3>@ViewBag.DailySalesUSD.ToString("N2") $</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-2">
+            <div class="card shadow border-warning">
+                <div class="card-body">
+                    <h5>🛒 مبيعات اليوم (ل.س)</h5>
+                    <h3>@ViewBag.DailySalesSYP.ToString("N0") ل.س</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mb-4 text-center">
+
+        <div class="col-md-3 mb-2">
+            <div class="card shadow border-info">
+                <div class="card-body">
+                    <h5>📊 مبيعات الشهر ($)</h5>
+                    <h3>@ViewBag.MonthlySalesUSD.ToString("N2") $</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-2">
+            <div class="card shadow border-secondary">
+                <div class="card-body">
+                    <h5>📊 مبيعات الشهر (ل.س)</h5>
+                    <h3>@ViewBag.MonthlySalesSYP.ToString("N0") ل.س</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-2">
+            <div class="card shadow border-success">
+                <div class="card-body">
+                    <h5>📈 الربح الشهري ($)</h5>
+                    <h3>@ViewBag.MonthlyProfitUSD.ToString("N2") $</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-2">
+            <div class="card shadow border-dark">
+                <div class="card-body">
+                    <h5>📈 الربح الشهري (ل.س)</h5>
+                    <h3>@ViewBag.MonthlyProfitSYP.ToString("N0") ل.س</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <a asp-controller="Products" asp-action="Index" class="btn btn-secondary mb-4">
+        الرجوع إلى المنتجات
+    </a>
+
+    @foreach (var sale in Model)
+    {
+
+        decimal invoiceTotal = 0;
+        decimal invoiceProfit = 0;
+
+        <div class="card shadow mb-4">
+
+            <div class="card-header bg-dark text-white">
+
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <strong>المشتري:</strong> @sale.CustomerName
+                    </div>
+
+                    <div class="col-md-4">
+                        <strong>التاريخ:</strong> @sale.SaleDate.ToString("yyyy-MM-dd HH:mm")
+                    </div>
+
+                    <div class="col-md-4 text-end">
+
+                        <a asp-action="Edit" asp-route-id="@sale.Id" class="btn btn-warning btn-sm">
+                            تعديل
+                        </a>
+
+                        <a asp-action="Delete" asp-route-id="@sale.Id" class="btn btn-danger btn-sm">
+                            حذف
+                        </a>
+                        @if (sale.CustomerDebtId != null)
+                        {
+                            <a asp-controller="Debts"
+                               asp-action="AddPayment"
+                               asp-route-debtId="@sale.CustomerDebtId"
+                               asp-route-saleId="@sale.Id"
+                               class="btn btn-success btn-sm">
+                                تسديد دفعة
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <table class="table table-bordered text-center">
+
+                    <thead class="table-secondary">
+                        <tr>
+                            <th>المنتج</th>
+                            <th>الكمية</th>
+                            <th>سعر البيع</th>
+                            <th>إجمالي البيع</th>
+                            <th>الربح</th>
+                            <th>العملة</th>
+                            <th>سعر الصرف</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in sale.Items)
+                        {
+                            var itemCurrency = item.SaleCurrency == "USD" ? "$" : "ل.س";
+                            var total = item.SellingPrice * item.QuantitySold;
+
+                            invoiceTotal += total;
+                            invoiceProfit += item.Profit;
+
+                            <tr>
+
+                                <td>@(item.Product?.Name ?? "غير معروف")</td>
+
+                                <td>@item.QuantitySold</td>
+
+                                <td>@item.SellingPrice.ToString("N2") @itemCurrency</td>
+
+                                <td class="text-primary fw-bold">
+                                    @total.ToString("N2") @itemCurrency
+                                </td>
+
+                                <td class="text-success fw-bold">
+                                    @item.Profit.ToString("N2") @itemCurrency
+                                </td>
+
+                                <td>@(item.SaleCurrency == "USD" ? "دولار $" : "ليرة سورية")</td>
+
+                                <td>
+                                    @(item.ExchangeRate > 0 ? item.ExchangeRate.ToString("N0") : "-")
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+                <div class="row mb-3">
+
+                    <div class="col-md-4">
+                        <h5 class="text-primary">
+                            إجمالي الفاتورة: @invoiceTotal.ToString("N2") @(sale.Items.FirstOrDefault()?.SaleCurrency == "USD" ? "$" : "ل.س")
+                        </h5>
+                    </div>
+
+                    <div class="col-md-4 text-center">
+                        <h5 class="text-success">
+                            الربح الكلي: @invoiceProfit.ToString("N2") @(sale.Items.FirstOrDefault()?.SaleCurrency == "USD" ? "$" : "ل.س")
+                        </h5>
+                    </div>
+
+                    <!-- المدفوع والمتبقي -->
+                    <div class="col-md-4 text-end">
+                        @{
+                            if (sale.CustomerDebt != null)
+                            {
+                                var invoiceCurrency = sale.Items.FirstOrDefault()?.SaleCurrency ?? "USD";
+
+                                var paid = sale.CustomerDebt.Payments
+                                .Where(p => p.SaleId == sale.Id)
+                                .Sum(p => p.Amount);
+
+                                var remaining = invoiceTotal - paid;
+
+                                <h5 class="text-success">
+                                    المدفوع: @paid.ToString("N2") @(invoiceCurrency == "USD" ? "$" : "ل.س")
+                                </h5>
+
+                                <h5 class="text-danger">
+                                    المتبقي: @remaining.ToString("N2") @(invoiceCurrency == "USD" ? "$" : "ل.س")
+                                </h5>
+                            }
+                            else
+                            {
+                                var invoiceCurrency = sale.Items.FirstOrDefault()?.SaleCurrency ?? "USD";
+
+                                <h5 class="text-success">
+                                    مدفوع بالكامل: @invoiceTotal.ToString("N2") @(invoiceCurrency == "USD" ? "$" : "ل.س")
+                                </h5>
+                            }
+                        }
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    }
+
+</div>

@@ -1,0 +1,38 @@
+﻿@model StoreApp.Models.DebtPayment
+
+<div class="container mt-4" dir="rtl">
+
+    <h3 class="mb-4">تسجيل دفعة</h3>
+
+    <form asp-action="AddPayment" method="post">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="CustomerDebtId" value="@ViewBag.DebtId" />
+        <input type="hidden" name="SaleId" value="@ViewBag.SaleId" />
+
+        <div class="mb-3">
+            <label>المبلغ</label>
+            <input asp-for="Amount" class="form-control" />
+            <span asp-validation-for="Amount" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label>العملة</label>
+            <select asp-for="Currency" class="form-control">
+                <option value="USD">USD</option>
+                <option value="SYP">SYP</option>
+            </select>
+            <span asp-validation-for="Currency" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">تسجيل الدفع</button>
+        <a asp-action="Details" asp-route-id="@ViewBag.DebtId" class="btn btn-secondary">إلغاء</a>
+    </form>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

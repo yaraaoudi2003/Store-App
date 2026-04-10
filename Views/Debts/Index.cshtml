@@ -1,0 +1,94 @@
+﻿@model IEnumerable<StoreApp.Models.CustomerDebt>
+
+<div class="container mt-4" dir="rtl">
+
+    <h3 class="mb-4">الديون</h3>
+
+
+
+    <table class="table table-bordered text-center">
+
+        <thead class="table-dark">
+            <tr>
+                <th>الاسم</th>
+                <th>إجمالي ($)</th>
+                <th>المدفوع ($)</th>
+                <th>المتبقي ($)</th>
+                <th>إجمالي (ل.س)</th>
+                <th>المدفوع (ل.س)</th>
+                <th>المتبقي (ل.س)</th>
+                <th>الحالة</th>
+                <th>العمليات</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var d in Model)
+            {
+                //  الحساب من الفواتير بدل DebtItems
+
+                var totalUSD = d.Sales
+                .Where(s => s.SaleCurrency == "USD")
+                .Sum(s => s.TotalAmount);
+
+                var totalSYP = d.Sales
+                .Where(s => s.SaleCurrency == "SYP")
+                .Sum(s => s.TotalAmount);
+
+                var paidUSD = d.Payments
+                .Where(p => p.Currency == "USD")
+                .Sum(p => p.Amount);
+
+                var paidSYP = d.Payments
+                .Where(p => p.Currency == "SYP")
+                .Sum(p => p.Amount);
+
+                var remainingUSD = totalUSD - paidUSD;
+                var remainingSYP = totalSYP - paidSYP;
+
+                <tr>
+                    <td>@d.CustomerName</td>
+
+                    <td>@totalUSD.ToString("N2")</td>
+                    <td>@paidUSD.ToString("N2")</td>
+                    <td class="text-danger fw-bold">@remainingUSD.ToString("N2")</td>
+
+                    <td>@totalSYP.ToString("N0")</td>
+                    <td>@paidSYP.ToString("N0")</td>
+                    <td class="text-danger fw-bold">@remainingSYP.ToString("N0")</td>
+
+                    <td>
+                        @if (remainingUSD == 0 && remainingSYP == 0)
+                        {
+                            <span class="badge bg-success">مدفوع</span>
+                        }
+                        else if (paidUSD > 0 || paidSYP > 0)
+                        {
+                            <span class="badge bg-warning text-dark">جزئي</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">غير مدفوع</span>
+                        }
+                    </td>
+
+                    <td>
+                        <a asp-action="Details" asp-route-id="@d.Id" class="btn btn-info btn-sm">
+                            تفاصيل
+                        </a>
+
+                        <a asp-action="AddPayment" asp-route-id="@d.Id" class="btn btn-success btn-sm">
+                            تسديد
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+    <a asp-controller="Products" asp-action="Index" class="btn btn-secondary mt-3">
+        الرجوع إلى المنتجات
+    </a>
+
+</div>

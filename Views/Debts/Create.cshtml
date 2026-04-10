@@ -1,0 +1,33 @@
+﻿@model StoreApp.Models.CustomerDebt
+
+<div class="container mt-4" dir="rtl">
+
+    <h3 class="mb-4">إضافة شخص مدين</h3>
+
+    <form asp-action="Create" method="post">
+
+        <div class="mb-3">
+
+            <label class="form-label">اسم الشخص</label>
+
+            <input asp-for="CustomerName" class="form-control text-end" />
+
+            <span asp-validation-for="CustomerName" class="text-danger"></span>
+
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            حفظ
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            رجوع
+        </a>
+
+    </form>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

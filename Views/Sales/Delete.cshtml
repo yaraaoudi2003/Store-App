@@ -1,0 +1,72 @@
+﻿@model StoreApp.Models.Sale
+
+<div class="container mt-4" dir="rtl">
+
+	<h3 class="text-danger mb-4">هل تريد حذف عملية البيع؟</h3>
+
+	<div class="card shadow">
+
+		<div class="card-header bg-dark text-white">
+
+			<strong>المشتري:</strong> @Model.CustomerName
+			<br>
+
+			<strong>التاريخ:</strong> @Model.SaleDate.ToString("yyyy-MM-dd HH:mm")
+
+		</div>
+
+		<div class="card-body">
+
+			<table class="table table-bordered text-center">
+
+				<thead class="table-dark">
+					<tr>
+						<th>المنتج</th>
+						<th>الكمية</th>
+						<th>سعر البيع</th>
+						<th>الربح</th>
+					</tr>
+				</thead>
+
+				<tbody>
+
+					@foreach (var item in Model.Items)
+					{
+						var currency = item.SaleCurrency == "USD" ? "$" : "ل.س";
+
+						<tr>
+
+							<td>@item.Product?.Name</td>
+
+							<td>@item.QuantitySold</td>
+
+							<td>@item.SellingPrice @currency</td>
+
+							<td class="text-success">@item.Profit @currency</td>
+
+						</tr>
+					}
+
+				</tbody>
+
+			</table>
+
+			<form asp-action="Delete" method="post">
+
+				<input type="hidden" asp-for="Id" />
+
+				<button type="submit" class="btn btn-danger">
+					تأكيد الحذف
+				</button>
+
+				<a asp-action="Index" class="btn btn-secondary">
+					إلغاء
+				</a>
+
+			</form>
+
+		</div>
+
+	</div>
+
+</div>

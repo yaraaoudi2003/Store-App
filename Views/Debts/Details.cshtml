@@ -1,0 +1,123 @@
+﻿@model StoreApp.Models.CustomerDebt
+
+<div class="container mt-4" dir="rtl">
+
+    <h3 class="mb-4">تفاصيل الدين: @Model.CustomerName</h3>
+
+    <div class="mb-3">
+        <a asp-action="AddPayment" asp-route-id="@Model.Id" class="btn btn-success">
+            تسديد مبلغ
+        </a>
+    </div>
+
+    <!--  الفواتير بالدولار -->
+    <h4 class="mt-4">الفواتير بالدولار ($)</h4>
+
+    @{
+        var salesUSD = Model.Sales.Where(s => s.SaleCurrency == "USD").ToList();
+
+        var totalUSD = salesUSD.Sum(s => s.TotalAmount);
+        var paidUSD = Model.Payments.Where(p => p.Currency == "USD").Sum(p => p.Amount);
+        var remainingUSD = totalUSD - paidUSD;
+    }
+
+    <table class="table table-bordered text-center mb-4">
+        <thead class="table-dark">
+            <tr>
+                <th>رقم الفاتورة</th>
+                <th>التاريخ</th>
+                <th>المبلغ</th>
+                <th>عدد العناصر</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sale in salesUSD)
+            {
+                <tr>
+                    <td>@sale.Id</td>
+                    <td>@sale.SaleDate.ToShortDateString()</td>
+                    <td>@sale.TotalAmount.ToString("N2") $</td>
+                    <td>@sale.Items.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="alert alert-info">
+        المجموع: @totalUSD.ToString("N2") $
+        <br>
+        المدفوع: @paidUSD.ToString("N2") $
+        <br>
+        المتبقي: <b class="text-danger">@remainingUSD.ToString("N2") $</b>
+    </div>
+
+
+    <!--  الفواتير بالليرة -->
+    <h4 class="mt-4">الفواتير بالليرة السورية (ل.س)</h4>
+
+    @{
+        var salesSYP = Model.Sales.Where(s => s.SaleCurrency == "SYP").ToList();
+
+        var totalSYP = salesSYP.Sum(s => s.TotalAmount);
+        var paidSYP = Model.Payments.Where(p => p.Currency == "SYP").Sum(p => p.Amount);
+        var remainingSYP = totalSYP - paidSYP;
+    }
+
+    <table class="table table-bordered text-center mb-4">
+        <thead class="table-dark">
+            <tr>
+                <th>رقم الفاتورة</th>
+                <th>التاريخ</th>
+                <th>المبلغ</th>
+                <th>عدد العناصر</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sale in salesSYP)
+            {
+                <tr>
+                    <td>@sale.Id</td>
+                    <td>@sale.SaleDate.ToShortDateString()</td>
+                    <td>@sale.TotalAmount.ToString("N0") ل.س</td>
+                    <td>@sale.Items.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="alert alert-info">
+        المجموع: @totalSYP.ToString("N0") ل.س
+        <br>
+        المدفوع: @paidSYP.ToString("N0") ل.س
+        <br>
+        المتبقي: <b class="text-danger">@remainingSYP.ToString("N0") ل.س</b>
+    </div>
+
+    <!--  عرض الدفعات -->
+    <h4 class="mt-4">الدفعات</h4>
+
+    <table class="table table-bordered text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>المبلغ</th>
+                <th>العملة</th>
+                <th>التاريخ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pay in Model.Payments)
+            {
+                <tr>
+                    <td>@pay.Amount</td>
+                    <td>@pay.Currency</td>
+                    <td>@pay.Date.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-action="Index" class="btn btn-secondary mt-3">
+        رجوع
+    </a>
+
+</div>

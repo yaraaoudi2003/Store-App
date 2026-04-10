@@ -1,0 +1,170 @@
+﻿@model StoreApp.Models.Sale
+
+@{
+    ViewData["Title"] = "تعديل عملية بيع";
+    var productsJson = Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.Products);
+}
+
+<div class="container mt-4" dir="rtl">
+
+    <h3 class="text-center mb-4">تعديل عملية بيع</h3>
+
+    <!-- عرض رسائل الخطأ -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger shadow-sm p-3 mb-4 rounded">
+            <h5><i class="bi bi-exclamation-triangle-fill"></i> هناك أخطاء في النموذج</h5>
+            <ul class="mb-0">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <form asp-action="Edit" method="post">
+
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label>اسم المشتري</label>
+            <input asp-for="CustomerName" class="form-control" />
+        </div>
+
+        <table class="table table-bordered" id="productsTable">
+            <thead class="table-dark">
+                <tr>
+                    <th>المنتج</th>
+                    <th>الكمية</th>
+                    <th>سعر البيع</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Items.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <select name="Items[@i].ProductId"
+                                    class="form-control productSelect"
+                                    data-selected="@Model.Items[i].ProductId">
+                            </select>
+                            <input type="hidden"
+                                   name="Items[@i].Id"
+                                   value="@Model.Items[i].Id" />
+                        </td>
+                        <td>
+                            <input name="Items[@i].QuantitySold"
+                                   value="@Model.Items[i].QuantitySold"
+                                   class="form-control" />
+                        </td>
+                        <td>
+                            <input name="Items[@i].SellingPrice"
+                                   value="@Model.Items[i].SellingPrice"
+                                   class="form-control" />
+                        </td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-danger"
+                                    onclick="removeRow(this)">
+                                حذف
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button type="button"
+                class="btn btn-primary mb-3"
+                onclick="addRow()">
+            ➕ إضافة منتج
+        </button>
+
+        <div class="mt-3">
+            <label>عملة البيع</label>
+            <select asp-for="SaleCurrency"
+                    id="currency"
+                    class="form-control"
+                    onchange="toggleExchangeRate()">
+                <option value="USD">دولار</option>
+                <option value="SYP">ليرة سورية</option>
+            </select>
+        </div>
+
+        <div class="mt-3"
+             id="exchangeDiv"
+             style="display:@(Model.SaleCurrency == "SYP" ? "block" : "none")">
+            <label>سعر الصرف</label>
+            <input asp-for="ExchangeRate" class="form-control" />
+        </div>
+
+        <br>
+
+        <button type="submit" class="btn btn-success">
+            حفظ التعديل
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            رجوع
+        </a>
+
+    </form>
+
+</div>
+
+<script>
+    let index = @Model.Items.Count;
+    let products = @Html.Raw(productsJson);
+
+    function fillSelects() {
+        document.querySelectorAll(".productSelect").forEach(select => {
+            let selected = select.getAttribute("data-selected");
+            select.innerHTML = "";
+            products.forEach(p => {
+                let option = document.createElement("option");
+                option.value = p.Value;
+                option.text = p.Text;
+                if (selected == p.Value) option.selected = true;
+                select.appendChild(option);
+            });
+        });
+    }
+
+    fillSelects();
+
+    function addRow() {
+        let table = document.querySelector("#productsTable tbody");
+        let tr = document.createElement("tr");
+
+        tr.innerHTML = `
+                <td>
+                    <select name="Items[${index}].ProductId" class="form-control productSelect"></select>
+                </td>
+                <td>
+                    <input name="Items[${index}].QuantitySold" class="form-control"/>
+                </td>
+                <td>
+                    <input name="Items[${index}].SellingPrice" class="form-control"/>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeRow(this)">حذف</button>
+                </td>
+            `;
+        table.appendChild(tr);
+        fillSelects();
+        index++;
+    }
+
+    function removeRow(btn) {
+        btn.closest("tr").remove();
+    }
+
+    function toggleExchangeRate() {
+        let currency = document.getElementById("currency").value;
+        let div = document.getElementById("exchangeDiv");
+        div.style.display = (currency === "SYP") ? "block" : "none";
+    }
+</script>

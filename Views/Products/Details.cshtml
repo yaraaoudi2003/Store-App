@@ -1,0 +1,82 @@
+﻿@model StoreApp.Models.Product
+
+<div class="container mt-5" dir="rtl">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow-lg">
+
+                <div class="card-header bg-info text-white text-end">
+                    <h4 class="mb-0">تفاصيل المنتج</h4>
+                </div>
+
+                <div class="card-body text-end">
+
+                    <div class="row mb-3">
+                        <div class="col-5 fw-bold">
+                            اسم المنتج
+                        </div>
+                        <div class="col-7">
+                            @Model.Name
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-5 fw-bold">
+                            الكمية
+                        </div>
+                        <div class="col-7">
+                            @Model.Quantity
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-5 fw-bold">
+                            سعر الشراء
+                        </div>
+                        <div class="col-7">
+                            @Model.initialPrice
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-5 fw-bold">
+                            سعر البيع
+                        </div>
+                        <div class="col-7">
+                            @Model.UnitPrice
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-5 fw-bold">
+                            السعر الإجمالي
+                        </div>
+                        <div class="col-7 text-success fw-bold">
+                            @Model.TotalPrice
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            تعديل المنتج
+                        </a>
+
+                        <a asp-action="Index" class="btn btn-secondary">
+                            العودة إلى المنتجات
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

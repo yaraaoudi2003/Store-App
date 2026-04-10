@@ -1,0 +1,110 @@
+﻿@model StoreApp.Models.Product
+
+<div class="container mt-5" dir="rtl">
+
+    ```
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow-lg">
+
+                <div class="card-header bg-dark text-white text-center">
+                    <h4 class="mb-0">إضافة منتج جديد</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-action="Create">
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">اسم المنتج</label>
+                            <input asp-for="Name" class="form-control text-end" placeholder="أدخل اسم المنتج" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">الكمية</label>
+                            <input asp-for="Quantity" class="form-control text-end" id="quantity" placeholder="أدخل الكمية" />
+                            <span asp-validation-for="Quantity" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">سعر الشراء</label>
+                            <input asp-for="initialPrice" class="form-control text-end" placeholder="أدخل سعر الشراء" />
+                            <span asp-validation-for="initialPrice" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">سعر البيع للقطعة</label>
+                            <input asp-for="UnitPrice" class="form-control text-end" id="unitPrice" placeholder="أدخل سعر البيع" />
+                            <span asp-validation-for="UnitPrice" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">السعر الإجمالي</label>
+                            <input type="text" class="form-control text-end bg-light" id="totalPrice" readonly />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">العملة</label>
+
+                            <select asp-for="Currency" class="form-select text-end">
+
+                                <option value="USD">$ دولار</option>
+
+                                <option value="SYP">ليرة سورية (ل.س)</option>
+
+                            </select>
+
+                            <span asp-validation-for="Currency" class="text-danger"></span>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+
+                            <a asp-action="Index" class="btn btn-secondary">
+                                العودة
+                            </a>
+
+                            <button type="submit" class="btn btn-success">
+                                حفظ المنتج
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    ```
+
+</div>
+
+@section Scripts {
+
+    <script>
+
+        function calculateTotal() {
+
+            var quantity = parseFloat(document.getElementById("quantity").value) || 0;
+            var price = parseFloat(document.getElementById("unitPrice").value) || 0;
+
+            var total = quantity * price;
+
+            document.getElementById("totalPrice").value = total.toLocaleString();
+        }
+
+        document.getElementById("quantity").addEventListener("input", calculateTotal);
+        document.getElementById("unitPrice").addEventListener("input", calculateTotal);
+
+    </script>
+
+}
